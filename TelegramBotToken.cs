@@ -9,17 +9,16 @@ namespace Module_9
 {
     class TelegramBotToken
     {
-        private string token;
         public string Token { get; }
 
         public TelegramBotToken()
         {
-            this.token = AssigningTokenFromFile();
+            Token = AssigningTokenFromFile();
         }
 
         private string AssigningTokenFromFile()
         {
-            FileInfo file = new FileInfo("token.txt");
+            FileInfo file = new FileInfo(@"C:\token.txt");
             string token = null;
             if (file.Exists)
             {
