@@ -34,7 +34,7 @@ namespace Module_9
             var msg = e.Message;
             if (msg.Type == MessageType.Photo) await DownloadPhotoFromChat(msg);
             if (msg.Type == MessageType.Document) await DownloadFileFromChat(msg);
-            //if (msg.Type == MessageType.Video) ;
+            if (msg.Type == MessageType.Video) await DownloadVideoFromChat(msg);
             if (msg.Type == MessageType.Text) await TextMessageHandler(msg);
 
             
@@ -72,6 +72,15 @@ namespace Module_9
                 await bot.DownloadFileAsync(file.FilePath, fs);
             }
             
+        }
+
+        private static async Task DownloadVideoFromChat(Telegram.Bot.Types.Message msg)
+        {
+            var file = await bot.GetFileAsync(msg.Video.FileId);
+            using (FileStream fs = new FileStream(msg.Video.FileId + ".mp4", FileMode.Create))
+            {
+                await bot.DownloadFileAsync(file.FilePath, fs);
+            }
         }
     }
 }
