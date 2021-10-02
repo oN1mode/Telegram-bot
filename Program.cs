@@ -36,9 +36,6 @@ namespace Module_9
             if (msg.Type == MessageType.Document) await DownloadFileFromChat(msg);
             if (msg.Type == MessageType.Video) await DownloadVideoFromChat(msg);
             if (msg.Type == MessageType.Text) await TextMessageHandler(msg);
-
-            
-
         }
 
         private static async Task TextMessageHandler(Telegram.Bot.Types.Message msg)
@@ -65,9 +62,10 @@ namespace Module_9
 
         private static async Task DownloadPhotoFromChat(Telegram.Bot.Types.Message msg)
         {
-            
+            DirectoryInfo di = new DirectoryInfo(@"C:\Users\slava\Desktop\Homework_Skillbox\Module_9\oN1mode\Module_9\bin\Debug\net5.0");
+            int count = di.GetFiles().Length;
             var file = await bot.GetFileAsync(msg.Photo[msg.Photo.Length - 1].FileId);
-            using (FileStream fs = new FileStream(msg.Photo[msg.Photo.Length - 1].FileId + ".jpg", FileMode.Create))
+            using (FileStream fs = new FileStream("photo_"+ count + ".jpg", FileMode.Create))
             {
                 await bot.DownloadFileAsync(file.FilePath, fs);
             }
@@ -76,8 +74,10 @@ namespace Module_9
 
         private static async Task DownloadVideoFromChat(Telegram.Bot.Types.Message msg)
         {
+            DirectoryInfo di = new DirectoryInfo(@"C:\Users\slava\Desktop\Homework_Skillbox\Module_9\oN1mode\Module_9\bin\Debug\net5.0");
+            int count = di.GetFiles().Length;
             var file = await bot.GetFileAsync(msg.Video.FileId);
-            using (FileStream fs = new FileStream(msg.Video.FileId + ".mp4", FileMode.Create))
+            using (FileStream fs = new FileStream("video_" + count + ".mp4", FileMode.Create))
             {
                 await bot.DownloadFileAsync(file.FilePath, fs);
             }
