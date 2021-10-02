@@ -1,9 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Module_9
 {
@@ -38,6 +35,11 @@ namespace Module_9
                 Console.WriteLine($"Файл token.txt не сущществует, пожалуйста создайте его и запишите в него token");
                 return token;
             }
+        }
+
+        public override string ToString()
+        {
+            return $"{Token}";
         }
 
     }
