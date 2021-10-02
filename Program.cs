@@ -6,6 +6,10 @@ using System.Net;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Module_9
 {
@@ -17,6 +21,7 @@ namespace Module_9
         {
             Console.WriteLine("Hello World!");
             TelegramBotToken tokenBot = new TelegramBotToken();
+            if (tokenBot.Token == null) return;
             bot = new TelegramBotClient(tokenBot.Token);
             bot.OnMessage += MessageList;
             bot.StartReceiving();
@@ -27,7 +32,7 @@ namespace Module_9
         private static async void MessageList(object sender, MessageEventArgs e)
         {
             var msg = e.Message;
-            //if (msg.Type == MessageType.Photo) ;
+            if (msg.Type == MessageType.Photo) await DownloadPhotoFromChat(msg);
             if (msg.Type == MessageType.Document) await DownloadFileFromChat(msg);
             //if (msg.Type == MessageType.Video) ;
             if (msg.Type == MessageType.Text) await TextMessageHandler(msg);
@@ -40,8 +45,7 @@ namespace Module_9
         {
             if (msg.Text != null)
             {
-                Console.WriteLine("пришло сообщение");
-                await bot.SendTextMessageAsync(msg.Chat.Id, msg.Text, replyToMessageId: msg.MessageId);
+                Console.WriteLine($"пришло сообщение: {msg.Text}");
 
                 if (msg.Text.ToLower() == "hi" || msg.Text.ToLower() == "hello" || msg.Text.ToLower() == "привет" || msg.Text.ToLower() == "здорово" || msg.Text.ToLower() == "здарово" || msg.Text.ToLower() == "хай")
                 {
@@ -59,13 +63,15 @@ namespace Module_9
             }
         }
 
-        //private static async Task DownloadPhotoFromChat(Telegram.Bot.Types.Message msg)
-        //{
-        //    var file = await bot.GetFileAsync(msg.Photo);
-        //    using (FileStream fs = new FileStream(msg.Document.FileName, FileMode.Create))
-        //    {
-        //        await bot.DownloadFileAsync(file.FilePath, fs);
-        //    }
-        //}
+        private static async Task DownloadPhotoFromChat(Telegram.Bot.Types.Message msg)
+        {
+            
+            var file = await bot.GetFileAsync(msg.Photo[msg.Photo.Length - 1].FileId);
+            using (FileStream fs = new FileStream(msg.Photo[msg.Photo.Length - 1].FileId + ".jpg", FileMode.Create))
+            {
+                await bot.DownloadFileAsync(file.FilePath, fs);
+            }
+            
+        }
     }
 }
