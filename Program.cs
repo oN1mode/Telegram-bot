@@ -88,7 +88,7 @@ namespace Module_9
         private static async Task DownloadAudioFromChat (Telegram.Bot.Types.Message msg)
         {
             var file = await bot.GetFileAsync(msg.Audio.FileId);
-            using (FileStream fs = new FileStream(DirectoryAudio.PathToDirectory + msg.Audio.Title, FileMode.Create))
+            using (FileStream fs = new FileStream(DirectoryAudio.PathToDirectory + msg.Audio.Title + ".mp3", FileMode.Create))
             {
                 await bot.DownloadFileAsync(file.FilePath, fs);
             }
