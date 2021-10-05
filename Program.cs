@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -55,7 +56,7 @@ namespace Module_9
             }
         }
 
-        private static async Task DownloadFileFromChat(Telegram.Bot.Types.Message msg)
+        private static async Task DownloadFileFromChat(Message msg)
         {
             var file = await bot.GetFileAsync(msg.Document.FileId);
             using (FileStream fs = new FileStream(DirectoryFiles.PathToDirectory + msg.Document.FileName, FileMode.Create))
@@ -64,7 +65,7 @@ namespace Module_9
             }
         }
 
-        private static async Task DownloadPhotoFromChat(Telegram.Bot.Types.Message msg)
+        private static async Task DownloadPhotoFromChat(Message msg)
         {
             
             var file = await bot.GetFileAsync(msg.Photo[msg.Photo.Length - 1].FileId);
@@ -75,7 +76,7 @@ namespace Module_9
             
         }
 
-        private static async Task DownloadVideoFromChat(Telegram.Bot.Types.Message msg)
+        private static async Task DownloadVideoFromChat(Message msg)
         {
             var file = await bot.GetFileAsync(msg.Video.FileId);
             using (FileStream fs = new FileStream(DirectoryVideo.PathToDirectory + ("video_" + DirectoryVideo.QuantityFilesToDirectoryVideo() + ".mp4"), FileMode.Create))
@@ -84,10 +85,19 @@ namespace Module_9
             }
         }
 
-        private static async Task DownloadAudioFromChat (Telegram.Bot.Types.Message msg)
+        private static async Task DownloadAudioFromChat (Message msg)
         {
             var file = await bot.GetFileAsync(msg.Audio.FileId);
-            using (FileStream fs = new FileStream(DirectoryAudio.PathToDirectory + ("audio_" + DirectoryAudio.QuantityFilesToDirectoryAudio() + ".mp3"), FileMode.Create))
+            using (FileStream fs = new FileStream(DirectoryAudio.PathToDirectory + msg.Audio.Title, FileMode.Create))
+            {
+                await bot.DownloadFileAsync(file.FilePath, fs);
+            }
+        }
+
+        private static async Task DownloadVoiceFromChat (Message msg)
+        {
+            var file = await bot.GetFileAsync(msg.Voice.FileId);
+            using (FileStream fs = new FileStream(DirectoryVoice.PathToDirectory + ("voice_" + DirectoryVoice.QuantityFilesToDirectoryVoice() + ".ogg") ,FileMode.Create))
             {
                 await bot.DownloadFileAsync(file.FilePath, fs);
             }
