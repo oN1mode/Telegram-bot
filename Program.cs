@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Linq;
 using System.Collections.Generic;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace Module_9
 {
@@ -38,8 +39,29 @@ namespace Module_9
             if (msg.Type == MessageType.Audio) await DownloadAudioFromChat(msg);
             if (msg.Type == MessageType.Text) await TextMessageHandler(msg);
             if (msg.Type == MessageType.Voice) await DownloadVoiceFromChat(msg);
-
             
+            await bot.SendTextMessageAsync(msg.Chat.Id, msg.Text, replyMarkup: GetButtons());
+            
+
+        }
+
+        private static IReplyMarkup GetButtons()
+        {
+            return new ReplyKeyboardMarkup
+            {
+                Keyboard = new List<List<KeyboardButton>>
+                {
+                    new List<KeyboardButton>
+                    {
+                        new KeyboardButton { Text = "Привет"}, new KeyboardButton { Text = "Список файлов на диске"}
+                        
+                    },
+                    new List<KeyboardButton>
+                    {
+                        new KeyboardButton { Text = "Курс валют на сегодня"}, new KeyboardButton { Text = "Пока"}
+                    }
+                }
+            };
 
         }
 
@@ -52,6 +74,15 @@ namespace Module_9
                 if (msg.Text.ToLower() == "hi" || msg.Text.ToLower() == "hello" || msg.Text.ToLower() == "привет" || msg.Text.ToLower() == "здорово" || msg.Text.ToLower() == "здарово" || msg.Text.ToLower() == "хай")
                 {
                     var stic = await bot.SendStickerAsync(msg.Chat.Id, sticker: "https://tlgrm.ru/_/stickers/f80/4f2/f804f23c-2691-332d-92e2-78bff6b9d47e/192/28.webp", replyToMessageId: msg.MessageId);
+                }
+                switch (msg.Text)
+                {
+                    case "Привет":
+                        break;
+
+                    default:
+                        await bot.SendTextMessageAsync(msg.Chat.Id, "Выберите команду: ", replyMarkup: GetButtons());
+                        break;
                 }
             }
         }
