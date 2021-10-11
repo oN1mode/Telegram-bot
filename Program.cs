@@ -111,7 +111,7 @@ namespace Module_9
         private static async Task DownloadFileFromChat(Telegram.Bot.Types.Message msg)
         {
             var file = await bot.GetFileAsync(msg.Document.FileId);
-            using (FileStream fs = new FileStream(DirectoryFiles.PathToDirectory + msg.Document.FileName, FileMode.Create))
+            using (FileStream fs = new FileStream(DirectoryFilesFromChat.PathToDirectory + msg.Document.FileName, FileMode.Create))
             {
                 await bot.DownloadFileAsync(file.FilePath, fs);
             }
@@ -121,7 +121,7 @@ namespace Module_9
         {
             
             var file = await bot.GetFileAsync(msg.Photo[msg.Photo.Length - 1].FileId);
-            using (FileStream fs = new FileStream(DirectoryPhoto.PathToDirectory + ("photo_" + DirectoryPhoto.QuantityFilesToDirectoryPhoto() + ".jpg"), FileMode.Create))
+            using (FileStream fs = new FileStream(DirectoryFilesFromChat.PathToDirectory + ("photo_" + DirectoryFilesFromChat.QuantityFilesToDirectoryFiles() + ".jpg"), FileMode.Create))
             {
                 await bot.DownloadFileAsync(file.FilePath, fs);
             }
@@ -131,7 +131,7 @@ namespace Module_9
         private static async Task DownloadVideoFromChat(Telegram.Bot.Types.Message msg)
         {
             var file = await bot.GetFileAsync(msg.Video.FileId);
-            using (FileStream fs = new FileStream(DirectoryVideo.PathToDirectory + ("video_" + DirectoryVideo.QuantityFilesToDirectoryVideo() + ".mp4"), FileMode.Create))
+            using (FileStream fs = new FileStream(DirectoryFilesFromChat.PathToDirectory + ("video_" + DirectoryFilesFromChat.QuantityFilesToDirectoryFiles() + ".mp4"), FileMode.Create))
             {
                 await bot.DownloadFileAsync(file.FilePath, fs);
             }
@@ -140,7 +140,7 @@ namespace Module_9
         private static async Task DownloadAudioFromChat (Telegram.Bot.Types.Message msg)
         {
             var file = await bot.GetFileAsync(msg.Audio.FileId);
-            using (FileStream fs = new FileStream(DirectoryAudio.PathToDirectory + msg.Audio.Title + ".mp3", FileMode.Create))
+            using (FileStream fs = new FileStream(DirectoryFilesFromChat.PathToDirectory + msg.Audio.Title + ".mp3", FileMode.Create))
             {
                 await bot.DownloadFileAsync(file.FilePath, fs);
             }
@@ -149,7 +149,7 @@ namespace Module_9
         private static async Task DownloadVoiceFromChat (Telegram.Bot.Types.Message msg)
         {
             var file = await bot.GetFileAsync(msg.Voice.FileId);
-            using (FileStream fs = new FileStream(DirectoryVoice.PathToDirectory + ("voice_" + DirectoryVoice.QuantityFilesToDirectoryVoice() + ".ogg") ,FileMode.Create))
+            using (FileStream fs = new FileStream(DirectoryFilesFromChat.PathToDirectory + ("voice_" + DirectoryFilesFromChat.QuantityFilesToDirectoryFiles() + ".ogg") ,FileMode.Create))
             {
                 await bot.DownloadFileAsync(file.FilePath, fs);
             }
