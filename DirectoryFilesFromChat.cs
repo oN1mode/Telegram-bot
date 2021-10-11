@@ -1,18 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Module_9
 {
-    public static class DirectoryPhoto
+    class DirectoryFilesFromChat
     {
         static public string PathToDirectory { get; }
 
 
-        static DirectoryPhoto()
+        static DirectoryFilesFromChat()
         {
             PathToDirectory = ReturnPathToDirectoryPhoto();
         }
@@ -20,7 +20,7 @@ namespace Module_9
         private static string ReturnPathToDirectoryPhoto()
         {
             string path;
-            string pathDirectory = AppDomain.CurrentDomain.BaseDirectory + @"\PhotoTelegramBot\";
+            string pathDirectory = AppDomain.CurrentDomain.BaseDirectory + @"\DirectoryFilesFromChat\";
             DirectoryInfo dirInfo = new DirectoryInfo(pathDirectory);
             if (dirInfo.Exists)
             {
@@ -35,20 +35,19 @@ namespace Module_9
             }
         }
 
-        public static List<string> ReturnListFilesToDirectoryPhoto()
+        public static string[] ReturnListFilesToDirectoryPhoto()
         {
-            List<string> nameFilesToDirectory = new List<string>();
-            DirectoryInfo dirInfo = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory + @"\PhotoTelegramBot");
-            nameFilesToDirectory.Add(dirInfo.GetFiles().ToString());
-            return nameFilesToDirectory;
+            //DirectoryInfo dirInfo = new DirectoryInfo(PathToDirectory);
+            return Directory.GetFiles(PathToDirectory); //dirInfo.ToString()
         }
 
         public static int QuantityFilesToDirectoryPhoto()
         {
-            int quantityFilesToDirectiry;
-            DirectoryInfo dirInfo = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory + @"\PhotoTelegramBot");
-            quantityFilesToDirectiry = dirInfo.GetFiles().Length;
-            return quantityFilesToDirectiry;
+            //int quantityFilesToDirectiry;
+            //DirectoryInfo dirInfo = new DirectoryInfo(PathToDirectory);
+            //quantityFilesToDirectiry = dirInfo.GetFiles().Length;
+            //return quantityFilesToDirectiry;
+            return Directory.GetFiles(PathToDirectory).Length;
         }
     }
 }

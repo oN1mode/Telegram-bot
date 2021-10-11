@@ -55,12 +55,12 @@ namespace Module_9
                 {
                     new List<KeyboardButton>
                     {
-                        new KeyboardButton { Text = "Привет"}, new KeyboardButton { Text = "Список файлов на диске"}
+                        new KeyboardButton { Text = "/start"}, new KeyboardButton { Text = "/help"}
                         
                     },
                     new List<KeyboardButton>
                     {
-                        new KeyboardButton { Text = "Курс валют на сегодня"}, new KeyboardButton { Text = "Пока"}
+                        new KeyboardButton { Text = "Курс валют на сегодня"}, new KeyboardButton { Text = "Список файлов на диске"}
                     }
                 }
             };
@@ -82,8 +82,20 @@ namespace Module_9
                 }
                 else if (msg.Text == "/help")
                 {
-                    await bot.SendTextMessageAsync(msg.Chat.Id, "Доступные команды, выбери одну из них", replyMarkup: GetButtons());
+                    await bot.SendTextMessageAsync(msg.Chat.Id, "Доступные команды представлены ниже, выбери одну из них", replyMarkup: GetButtons());
                 }
+                else if (msg.Text.ToLower() == "список файлов на диске" || msg.Text.ToLower() == "/список файлов на диске")
+                {
+                    //string [] titleFilesToDirectory = DirectoryPhoto.ReturnListFilesToDirectoryPhoto();
+                    //int count = default(int);
+                    //foreach (var title in titleFilesToDirectory)
+                    //{
+                    //    string messageToChat = String.Format($"{(++count)}" + ". " + $"{title}");
+                    //    await bot.SendTextMessageAsync(msg.Chat.Id, messageToChat);
+                    //}
+                    
+                }
+
                 //switch (msg.Text)
                 //{
                 //    case "Привет":
