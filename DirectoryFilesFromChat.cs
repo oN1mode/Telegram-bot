@@ -14,10 +14,10 @@ namespace Module_9
 
         static DirectoryFilesFromChat()
         {
-            PathToDirectory = ReturnPathToDirectoryPhoto();
+            PathToDirectory = ReturnPathToDirectoryFiles();
         }
 
-        private static string ReturnPathToDirectoryPhoto()
+        private static string ReturnPathToDirectoryFiles()
         {
             string path;
             string pathDirectory = AppDomain.CurrentDomain.BaseDirectory + @"\DirectoryFilesFromChat\";
@@ -35,13 +35,13 @@ namespace Module_9
             }
         }
 
-        public static string[] ReturnListFilesToDirectoryPhoto()
+        public static string[] ReturnListFilesToDirectoryFiles()
         {
             //DirectoryInfo dirInfo = new DirectoryInfo(PathToDirectory);
             return Directory.GetFiles(PathToDirectory); //dirInfo.ToString()
         }
 
-        public static int QuantityFilesToDirectoryPhoto()
+        public static int QuantityFilesToDirectoryFiles()
         {
             //int quantityFilesToDirectiry;
             //DirectoryInfo dirInfo = new DirectoryInfo(PathToDirectory);
