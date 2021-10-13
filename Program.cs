@@ -40,10 +40,6 @@ namespace Module_9
             if (msg.Type == MessageType.Audio) await DownloadAudioFromChat(msg);
             if (msg.Type == MessageType.Text) await TextMessageHandler(msg);
             if (msg.Type == MessageType.Voice) await DownloadVoiceFromChat(msg);
-            
-            //await bot.SendTextMessageAsync(msg.Chat.Id, "", replyMarkup: GetButtons());
-            
-
         }
 
         
@@ -86,26 +82,51 @@ namespace Module_9
                 }
                 else if (msg.Text.ToLower() == "список файлов на диске" || msg.Text.ToLower() == "/список файлов на диске")
                 {
-                    //string [] titleFilesToDirectory = DirectoryPhoto.ReturnListFilesToDirectoryPhoto();
-                    //int count = default(int);
-                    //foreach (var title in titleFilesToDirectory)
-                    //{
-                    //    string messageToChat = String.Format($"{(++count)}" + ". " + $"{title}");
-                    //    await bot.SendTextMessageAsync(msg.Chat.Id, messageToChat);
-                    //}
-                    
+                    await SendNamesFilesToChatFromDirectoryFilesFromChat(msg);
+
                 }
-
-                //switch (msg.Text)
-                //{
-                //    case "Привет":
-                //        break;
-
-                //    default:
-                //        await bot.SendTextMessageAsync(msg.Chat.Id, "Выберите команду: ", replyMarkup: GetButtons());
-                //        break;
-                //}
             }
+        }
+
+        private static async Task SendNamesFilesToChatFromDirectoryFilesFromChat(Telegram.Bot.Types.Message msg)
+        {
+            FileInfo[] titleFilesToDirectory = DirectoryFilesFromChat.ReturnListFilesToDirectoryFiles();
+            int count = default(int);
+            foreach (var title in titleFilesToDirectory)
+            {
+                string messageToChat = String.Format($"{(++count)}" + ". " + $"{title.Name}");
+                await bot.SendTextMessageAsync(msg.Chat.Id, messageToChat);
+            }
+
+            
+
+            await CreatedKeyboradButton(msg, count);
+        }
+
+        private static async Task CreatedKeyboradButton(Telegram.Bot.Types.Message msg, int count)
+        {
+            
+            var kb = new List<List<InlineKeyboardButton>>();
+            var rows = new List<InlineKeyboardButton[]>();
+            var cols = new List<InlineKeyboardButton>();
+
+            for (int i = 1; i <= count + 1; i++) //почему то не показывает 13ый файл, поиграться с условием if
+            {
+                
+                cols.Add(InlineKeyboardButton.WithCallbackData(i.ToString(), i.ToString()));
+                if (i % 3 != 0) continue;
+                //rows.Add(cols.ToArray());
+                kb.Add(cols);
+                cols = new List<InlineKeyboardButton>();
+            }
+            var replyMarkup = new InlineKeyboardMarkup(kb);
+
+            await SendKeyboardButtonForChat(msg, replyMarkup);
+        }
+
+        private static async Task SendKeyboardButtonForChat(Telegram.Bot.Types.Message msg, InlineKeyboardMarkup replyMarkup)
+        {
+            await bot.SendTextMessageAsync(msg.Chat.Id, "Выберите вариант", replyMarkup: replyMarkup);
         }
 
         private static async Task DownloadFileFromChat(Telegram.Bot.Types.Message msg)

@@ -35,18 +35,15 @@ namespace Module_9
             }
         }
 
-        public static string[] ReturnListFilesToDirectoryFiles()
+        public static FileInfo [] ReturnListFilesToDirectoryFiles()
         {
-            //DirectoryInfo dirInfo = new DirectoryInfo(PathToDirectory);
-            return Directory.GetFiles(PathToDirectory); //dirInfo.ToString()
+            DirectoryInfo dirInfo = new DirectoryInfo(PathToDirectory);
+            FileInfo[] filesDirectory = dirInfo.GetFiles();
+            return filesDirectory; 
         }
 
         public static int QuantityFilesToDirectoryFiles()
         {
-            //int quantityFilesToDirectiry;
-            //DirectoryInfo dirInfo = new DirectoryInfo(PathToDirectory);
-            //quantityFilesToDirectiry = dirInfo.GetFiles().Length;
-            //return quantityFilesToDirectiry;
             return Directory.GetFiles(PathToDirectory).Length;
         }
     }
