@@ -89,6 +89,10 @@ namespace Module_9
                 {
                     await bot.SendTextMessageAsync(msg.Chat.Id, "У меня всё замечательно! Как дела у Вас?");
                 }
+                else if (msg.Text.ToLower() == "пока" || msg.Text.ToLower() == "до свидания")
+                {
+                    await bot.SendTextMessageAsync(msg.Chat.Id, "До свидания! Приятно было пообщаться!");
+                }
                 else if (msg.Text == "/help")
                 {
                     await bot.SendTextMessageAsync(msg.Chat.Id, "Доступные команды представлены ниже, выбери одну из них", replyMarkup: GetButtons());
