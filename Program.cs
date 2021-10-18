@@ -16,6 +16,7 @@ namespace Module_9
         static TelegramBotClient bot;
         static void Main(string[] args)
         {
+            Console.WriteLine("Бот запущен");
             TelegramBotToken tokenBot = new TelegramBotToken();
             if (tokenBot.Token == null) return;
             bot = new TelegramBotClient(tokenBot.Token);
@@ -84,6 +85,10 @@ namespace Module_9
                 {
                     var stic = await bot.SendStickerAsync(msg.Chat.Id, sticker: "https://tlgrm.ru/_/stickers/f80/4f2/f804f23c-2691-332d-92e2-78bff6b9d47e/192/28.webp", replyToMessageId: msg.MessageId);
                 }
+                else if (msg.Text.ToLower() == "как дела?" || msg.Text.ToLower() == "как дела")
+                {
+                    await bot.SendTextMessageAsync(msg.Chat.Id, "У меня всё замечательно! Как дела у Вас?");
+                }
                 else if (msg.Text == "/help")
                 {
                     await bot.SendTextMessageAsync(msg.Chat.Id, "Доступные команды представлены ниже, выбери одну из них", replyMarkup: GetButtons());
@@ -97,6 +102,10 @@ namespace Module_9
                 {
                     await bot.SendTextMessageAsync(msg.Chat.Id, $"Курс USD = {CurrencyExchangeRate.USD : ##.##}");
                     await bot.SendTextMessageAsync(msg.Chat.Id, $"Курс EUR = {CurrencyExchangeRate.EUR : ##.##}");
+                }
+                else
+                {
+                    await bot.SendTextMessageAsync(msg.Chat.Id, "К сожалению мой создатель не научил меня отвечать на это сообщение, попробуйте спросить что-нибудь ещё");
                 }
             }
         }
