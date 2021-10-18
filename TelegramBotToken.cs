@@ -4,6 +4,9 @@ using System.IO;
 
 namespace Module_9
 {
+    /// <summary>
+    /// Класс считывающий токен для работы с telegram api
+    /// </summary>
     class TelegramBotToken
     {
         public string Token { get; }
@@ -13,6 +16,10 @@ namespace Module_9
             Token = AssigningTokenFromFile();
         }
 
+        /// <summary>
+        /// Метод считывания токена из файла расположенном на диске
+        /// </summary>
+        /// <returns></returns>
         private string AssigningTokenFromFile()
         {
             FileInfo file = new FileInfo(@"C:\token.txt");

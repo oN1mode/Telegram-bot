@@ -1,14 +1,9 @@
 ﻿using System;
 using Telegram.Bot;
-using Telegram.Bot.Exceptions;
 using System.IO;
-using System.Net;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Linq;
 using System.Collections.Generic;
 using Telegram.Bot.Types.ReplyMarkups;
 using Telegram.Bot.Types.InputFiles;
@@ -21,7 +16,6 @@ namespace Module_9
         static TelegramBotClient bot;
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
             TelegramBotToken tokenBot = new TelegramBotToken();
             if (tokenBot.Token == null) return;
             bot = new TelegramBotClient(tokenBot.Token);
@@ -31,19 +25,27 @@ namespace Module_9
             bot.StopReceiving();
         }
 
+        /// <summary>
+        /// Метод обработки сообщения пользователя в зависимости от типа сообщения
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static async void MessageList(object sender, MessageEventArgs e)
         {
             var msg = e.Message;
 
             if (msg.Type == MessageType.Photo) await DownloadPhotoFromChat(msg);
-            if (msg.Type == MessageType.Document) await DownloadFileFromChat(msg);
+            if (msg.Type == MessageType.Document) await DownloadDocumentFromChat(msg);
             if (msg.Type == MessageType.Video) await DownloadVideoFromChat(msg);
             if (msg.Type == MessageType.Audio) await DownloadAudioFromChat(msg);
             if (msg.Type == MessageType.Text) await TextMessageHandler(msg);
             if (msg.Type == MessageType.Voice) await DownloadVoiceFromChat(msg);
         }
 
-
+        /// <summary>
+        /// Клавиатура описывающая основные команды
+        /// </summary>
+        /// <returns></returns>
         private static IReplyMarkup GetButtons()
         {
             return new ReplyKeyboardMarkup
@@ -64,6 +66,11 @@ namespace Module_9
 
         }
 
+        /// <summary>
+        /// Метод обработки текстовых сообщений
+        /// </summary>
+        /// <param name="msg">сообщение от пользователя</param>
+        /// <returns></returns>
         private static async Task TextMessageHandler(Telegram.Bot.Types.Message msg)
         {
             if (msg.Text != null)
@@ -86,9 +93,19 @@ namespace Module_9
                     await SendNamesFilesToChatFromDirectoryFilesFromChat(msg);
 
                 }
+                else if (msg.Text.ToLower() == "курс валют на сегодня" || msg.Text.ToLower() == "/курс валют на сегодня")
+                {
+                    await bot.SendTextMessageAsync(msg.Chat.Id, $"Курс USD = {CurrencyExchangeRate.USD : ##.##}");
+                    await bot.SendTextMessageAsync(msg.Chat.Id, $"Курс EUR = {CurrencyExchangeRate.EUR : ##.##}");
+                }
             }
         }
 
+        /// <summary>
+        /// Метод отправляющий пользователю имена файлов расположенных в директории
+        /// </summary>
+        /// <param name="msg">сообщение от пользователя</param>
+        /// <returns></returns>
         private static async Task SendNamesFilesToChatFromDirectoryFilesFromChat(Telegram.Bot.Types.Message msg)
         {
             FileInfo[] titleFilesToDirectory = DirectoryFilesFromChat.ReturnListFilesToDirectoryFiles();
@@ -102,39 +119,53 @@ namespace Module_9
             await CreatedKeyboradButton(msg, count);
         }
 
+        /// <summary>
+        /// Метод формирующий клавиатуру в зависимости от кол-ва файлов расположенных в директории
+        /// </summary>
+        /// <param name="msg">сообщение от пользователя</param>
+        /// <param name="count">нумерация файлов</param>
+        /// <returns></returns>
         private static async Task CreatedKeyboradButton(Telegram.Bot.Types.Message msg, int count)
         {
             var keyboard = new List<List<InlineKeyboardButton>>();
-            var cols = new List<InlineKeyboardButton>();
+            var button = new List<InlineKeyboardButton>();
 
             for (int i = 1; i <= count; i++)
             {
-                cols.Add(InlineKeyboardButton.WithCallbackData(i.ToString(), i.ToString()));
-                if (i == count) keyboard.Add(cols);
-                if (i % 3 != 0) continue;
-                keyboard.Add(cols);
-                cols = new List<InlineKeyboardButton>();
+                button.Add(InlineKeyboardButton.WithCallbackData(i.ToString(), i.ToString()));
+                if (i == count) keyboard.Add(button);
+                if (i % 5 != 0) continue;
+                keyboard.Add(button);
+                button = new List<InlineKeyboardButton>();
             }
 
             var replyMarkup = new InlineKeyboardMarkup(keyboard);
             await SendKeyboardButtonForChat(msg, replyMarkup);
         }
 
+        /// <summary>
+        /// Метод отправляющий клавиатуру для выбора файла в чат
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="replyMarkup"></param>
+        /// <returns></returns>
         private static async Task SendKeyboardButtonForChat(Telegram.Bot.Types.Message msg, InlineKeyboardMarkup replyMarkup)
         {
             await bot.SendTextMessageAsync(msg.Chat.Id, "Выберите вариант", replyMarkup: replyMarkup);
             HandlerCallbackQuery();
         }
 
+        /// <summary>
+        /// Метод для обработки события выбора пользователем файла для загрузки с диска в чат
+        /// </summary>
         private static void HandlerCallbackQuery()
         {
             bot.OnCallbackQuery += async (object sc, Telegram.Bot.Args.CallbackQueryEventArgs eventArgs) =>
             {
                 var msg = eventArgs.CallbackQuery.Message;
-                int count = DirectoryFilesFromChat.QuantityFilesToDirectoryFiles();
                 FileInfo[] filesFromDirectory = DirectoryFilesFromChat.ReturnListFilesToDirectoryFiles();
 
-                for (int i = 1; i <= count; i++)
+                for (int i = 1; i <= filesFromDirectory.Length; i++)
                 {
                     if (eventArgs.CallbackQuery.Data == i.ToString())
                     {
@@ -152,6 +183,14 @@ namespace Module_9
         }
 
         #region Методы для отправки в чат файлов, расположенных на диске
+
+        /// <summary>
+        /// Метод для отправки фото с диска в чат
+        /// </summary>
+        /// <param name="msg">сообщения пользователя</param>
+        /// <param name="pathFile">путь к файлу</param>
+        /// <param name="nameFile">имя файла</param>
+        /// <returns></returns>
         private static async Task SendPhotoToChat(Telegram.Bot.Types.Message msg, string pathFile, string nameFile)
         {
             using (FileStream fs = File.OpenRead(pathFile))
@@ -161,6 +200,13 @@ namespace Module_9
             }
         }
 
+        /// <summary>
+        /// Метод для отправки видео с диска в чат
+        /// </summary>
+        /// <param name="msg">сообщения пользователя</param>
+        /// <param name="pathFile">путь к файлу</param>
+        /// <param name="nameFile">имя файла</param>
+        /// <returns></returns>
         private static async Task SendVideoToChat(Telegram.Bot.Types.Message msg, string pathFile, string nameFile)
         {
             using (FileStream fs = File.OpenRead(pathFile))
@@ -170,6 +216,13 @@ namespace Module_9
             }
         }
 
+        /// <summary>
+        /// Метод для отправки аудио с диска в чат
+        /// </summary>
+        /// <param name="msg">сообщения пользователя</param>
+        /// <param name="pathFile">путь к файлу</param>
+        /// <param name="nameFile">имя файла</param>
+        /// <returns></returns>
         private static async Task SendAudioToChat(Telegram.Bot.Types.Message msg, string pathFile, string nameFile)
         {
             using (FileStream fs = File.OpenRead(pathFile))
@@ -179,6 +232,13 @@ namespace Module_9
             }
         }
 
+        /// <summary>
+        /// Метод для отправки голосового сообщения с диска в чат
+        /// </summary>
+        /// <param name="msg">сообщения пользователя</param>
+        /// <param name="pathFile">путь к файлу</param>
+        /// <param name="nameFile">имя файла</param>
+        /// <returns></returns>
         private static async Task SendVoiceToChat(Telegram.Bot.Types.Message msg, string pathFile, string nameFile)
         {
             using (FileStream fs = File.OpenRead(pathFile))
@@ -188,6 +248,13 @@ namespace Module_9
             }
         }
 
+        /// <summary>
+        /// Метод для отправки документа с диска в чат
+        /// </summary>
+        /// <param name="msg">сообщения пользователя</param>
+        /// <param name="pathFile">путь к файлу</param>
+        /// <param name="nameFile">имя файла</param>
+        /// <returns></returns>
         private static async Task SendDocumentToChat(Telegram.Bot.Types.Message msg, string pathFile, string nameFile)
         {
             using (FileStream fs = File.OpenRead(pathFile))
@@ -199,8 +266,12 @@ namespace Module_9
         #endregion
 
         #region Методы для загрузки из чата файлов, присланных пользователями
-
-        private static async Task DownloadFileFromChat(Telegram.Bot.Types.Message msg)
+        /// <summary>
+        /// Метод для загрузки документа на диск из чата
+        /// </summary>
+        /// <param name="msg">сообщение от пользователя</param>
+        /// <returns></returns>
+        private static async Task DownloadDocumentFromChat(Telegram.Bot.Types.Message msg)
         {
             var file = await bot.GetFileAsync(msg.Document.FileId);
             using (FileStream fs = new FileStream(DirectoryFilesFromChat.PathToDirectory + msg.Document.FileName, FileMode.Create))
@@ -209,17 +280,25 @@ namespace Module_9
             }
         }
 
+        /// <summary>
+        /// Метод для загрузки фото на диск из чата
+        /// </summary>
+        /// <param name="msg">сообщение от пользователя</param>
+        /// <returns></returns>
         private static async Task DownloadPhotoFromChat(Telegram.Bot.Types.Message msg)
         {
-
             var file = await bot.GetFileAsync(msg.Photo[msg.Photo.Length - 1].FileId);
             using (FileStream fs = new FileStream(DirectoryFilesFromChat.PathToDirectory + ("photo_" + DirectoryFilesFromChat.QuantityFilesToDirectoryFiles() + ".jpg"), FileMode.Create))
             {
                 await bot.DownloadFileAsync(file.FilePath, fs);
             }
-
         }
 
+        /// <summary>
+        /// Метод для загрузки видео на диск из чата
+        /// </summary>
+        /// <param name="msg">сообщение от пользователя</param>
+        /// <returns></returns>
         private static async Task DownloadVideoFromChat(Telegram.Bot.Types.Message msg)
         {
             var file = await bot.GetFileAsync(msg.Video.FileId);
@@ -229,6 +308,11 @@ namespace Module_9
             }
         }
 
+        /// <summary>
+        /// Метод для загрузки аудио на диск из чата
+        /// </summary>
+        /// <param name="msg">сообщение от пользователя</param>
+        /// <returns></returns>
         private static async Task DownloadAudioFromChat(Telegram.Bot.Types.Message msg)
         {
             var file = await bot.GetFileAsync(msg.Audio.FileId);
@@ -238,6 +322,11 @@ namespace Module_9
             }
         }
 
+        /// <summary>
+        /// Метод для загрузки голосового сообщения на диск из чата
+        /// </summary>
+        /// <param name="msg">сообщение от пользователя</param>
+        /// <returns></returns>
         private static async Task DownloadVoiceFromChat(Telegram.Bot.Types.Message msg)
         {
             var file = await bot.GetFileAsync(msg.Voice.FileId);
