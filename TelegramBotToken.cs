@@ -30,10 +30,12 @@ namespace Module_9
                 {
                         token = sr.ReadToEnd();
                 }
-                if (token == null)
+                if (String.IsNullOrEmpty(token))
                 {
                     Console.WriteLine($"В файле {file.FullName} отсутствует token!");
-                    Console.ReadKey();
+                    string inputToken = InputTokenToConsole();
+                    WriteInputTokenToFile(inputToken);
+                    token = AssigningTokenFromFile();
                 }
                 return token;
             }
@@ -54,10 +56,7 @@ namespace Module_9
         /// <param name="inputToken">введенный токен</param>
         private static void WriteInputTokenToFile(string inputToken)
         {
-            using (StreamWriter fs = new StreamWriter("token.txt"))
-            {
-                fs.WriteLine(inputToken);
-            };
+            File.WriteAllText("token.txt", inputToken);
         }
 
         /// <summary>
