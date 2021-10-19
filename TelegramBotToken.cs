@@ -22,7 +22,7 @@ namespace Module_9
         /// <returns></returns>
         private string AssigningTokenFromFile()
         {
-            FileInfo file = new FileInfo(@"C:\token.txt");
+            FileInfo file = new FileInfo("token.txt");
             string token = null;
             if (file.Exists)
             {
@@ -39,9 +39,50 @@ namespace Module_9
             }
             else
             {
-                Console.WriteLine($"Файл token.txt не сущществует, пожалуйста создайте его и запишите в него token");
+                string inputToken = InputTokenToConsole();
+                CreatedFileForToken();
+                WriteInputTokenToFile(inputToken);
+                token = AssigningTokenFromFile();
                 return token;
             }
+
+        }
+
+        /// <summary>
+        /// Метод для записи введеного пользователем токена в файл
+        /// </summary>
+        /// <param name="inputToken">введенный токен</param>
+        private static void WriteInputTokenToFile(string inputToken)
+        {
+            using (StreamWriter fs = new StreamWriter("token.txt"))
+            {
+                fs.WriteLine(inputToken);
+            };
+        }
+
+        /// <summary>
+        /// Метод создания файла для хранения токена
+        /// </summary>
+        private static void CreatedFileForToken()
+        {
+            File.Create("token.txt");
+        }
+
+        /// <summary>
+        /// Метод для обработки введенного токена в консоль
+        /// </summary>
+        /// <returns></returns>
+        private static string InputTokenToConsole()
+        {
+            Console.Write("Для работоспособности программы Вам необходимо ввести токен: ");
+            string inputToken = Console.ReadLine();
+            inputToken.Trim();
+            if (String.IsNullOrEmpty(inputToken))
+            {
+                Console.WriteLine("Вы ввели пустую строку, попробуйте ещё раз");
+                inputToken = InputTokenToConsole();
+            }
+            return inputToken;
         }
 
         public override string ToString()

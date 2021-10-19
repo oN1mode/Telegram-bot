@@ -12,7 +12,6 @@ namespace Module_9
 {
     class Program
     {
-        private readonly static string token = File.ReadAllText(@"C:\token.txt");
         static TelegramBotClient bot;
         static void Main(string[] args)
         {
