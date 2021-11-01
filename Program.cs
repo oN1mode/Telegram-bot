@@ -78,19 +78,7 @@ namespace Module_9
                 Console.WriteLine($"пришло сообщение: {msg.Text}");
                 if (msg.Text == "/start")
                 {
-                    await bot.SendTextMessageAsync(msg.Chat.Id, "Добро пожаловать! Меня зовут Lazy_bot. Я умею немного общаться, а так же могу предоставлять актуальный курс по валютам USD и EUR");
-                }
-                else if (msg.Text.ToLower() == "hi" || msg.Text.ToLower() == "hello" || msg.Text.ToLower() == "привет" || msg.Text.ToLower() == "здорово" || msg.Text.ToLower() == "здарово" || msg.Text.ToLower() == "хай")
-                {
-                    var stic = await bot.SendStickerAsync(msg.Chat.Id, sticker: "https://tlgrm.ru/_/stickers/f80/4f2/f804f23c-2691-332d-92e2-78bff6b9d47e/192/28.webp", replyToMessageId: msg.MessageId);
-                }
-                else if (msg.Text.ToLower() == "как дела?" || msg.Text.ToLower() == "как дела")
-                {
-                    await bot.SendTextMessageAsync(msg.Chat.Id, "У меня всё замечательно! Как дела у Вас?");
-                }
-                else if (msg.Text.ToLower() == "пока" || msg.Text.ToLower() == "до свидания")
-                {
-                    await bot.SendTextMessageAsync(msg.Chat.Id, "До свидания! Приятно было пообщаться!");
+                    await bot.SendTextMessageAsync(msg.Chat.Id, MessageFromOrForUser.greetingUser);
                 }
                 else if (msg.Text == "/help")
                 {
@@ -103,8 +91,20 @@ namespace Module_9
                 }
                 else if (msg.Text.ToLower() == "курс валют на сегодня" || msg.Text.ToLower() == "/курс валют на сегодня")
                 {
-                    await bot.SendTextMessageAsync(msg.Chat.Id, $"Курс USD = {CurrencyExchangeRate.USD : ##.##}");
-                    await bot.SendTextMessageAsync(msg.Chat.Id, $"Курс EUR = {CurrencyExchangeRate.EUR : ##.##}");
+                    await bot.SendTextMessageAsync(msg.Chat.Id, $"Курс USD = {CurrencyExchangeRate.USD: ##.##}");
+                    await bot.SendTextMessageAsync(msg.Chat.Id, $"Курс EUR = {CurrencyExchangeRate.EUR: ##.##}");
+                }
+                else if (MessageFromOrForUser.greetingFromUser.Contains(msg.Text.ToLower()))
+                {
+                    await bot.SendStickerAsync(msg.Chat.Id, sticker: MessageFromOrForUser.sticker, replyToMessageId: msg.MessageId);
+                }
+                else if (MessageFromOrForUser.questionFromUserAboutBusiness.Contains(msg.Text.ToLower()))
+                {
+                    await bot.SendTextMessageAsync(msg.Chat.Id, "У меня всё замечательно! Как дела у Вас?");
+                }
+                else if (MessageFromOrForUser.farewellFromUser.Contains(msg.Text.ToLower()))
+                {
+                    await bot.SendTextMessageAsync(msg.Chat.Id, "До свидания! Приятно было пообщаться!");
                 }
                 else
                 {
